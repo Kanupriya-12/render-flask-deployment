@@ -12,7 +12,7 @@ def get_name():
     if not name:
         return jsonify({"error": "Missing 'name' parameter"}), 400
     
-    return jsonify({"message": f"{name}'s Flask app"})
+    return f"<h1>{name}'s Flask App</h1>"
 
 if __name__== "__main__":
     app.run()
