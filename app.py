@@ -266,6 +266,7 @@ Make the diet plan for all 7 days, the order of the days should follow from Mond
 @app.route('/get_plan', methods=['GET'])
 def get_name():
     
+    secret = request.args.get('secret')
     age = int(request.args.get('age'))
     gender = request.args.get('gender')
     height = int(request.args.get('height'))
@@ -311,7 +312,7 @@ def get_name():
    
     #Put prompt through OpenAI API
     client = OpenAI(
-     api_key="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"
+     api_key=secret
     )
 
 
