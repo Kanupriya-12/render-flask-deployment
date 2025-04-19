@@ -32,9 +32,11 @@ def daily_calories(age, gender, height, weight, activity):
 #Obtaining Nutrition Prompt
 
 def nutrition_gpt(bmr_final,goal,food_preferences,preferred_cuisines,meal_preference,previous_diets,any_nutritional_deficiences,medication):  
-    prompt1 =    f"""Draft a 7-day diet plan from Monday to Sunday for the following profile. Keep in mind that the meal plan is for indians.  
-                Calculate daily calories using the following information:
-                \n- Total Daily Energy Expenditure : {bmr_final}
+    prompt1 =    f"""Draft a 7-day diet plan for the following profile.
+                The meal plan should have breakfast, lunch, snack, dinner. 
+                Keep in mind that the meal plan is for indians. 
+                You calculate daily calories using the following information:
+                \n- Total Caloric Intake : {bmr_final}
                 \n- goal : {goal} 
                 \n - dietary preference : {food_preferences} 
                 \n- cuisines to include : {preferred_cuisines}
@@ -42,223 +44,208 @@ def nutrition_gpt(bmr_final,goal,food_preferences,preferred_cuisines,meal_prefer
                 \n- previous diets : {previous_diets}
                 \n- nutrition deficiences : {any_nutritional_deficiences}
                 \n- medication : {medication}
-                \n
                 
-Make sure each meal is a balanced meal. This means that there should be a good mix of carbs, fiber and protein. Make sure there is also a good integration of vitamins and micro nutrients in the meals, such as Vitamin C, D, A, B, and other micronutrients. These can be added through fruits. It is crucial to make sure that the total daily protein, carbs, fat and calorie intakes in the daily plan are within the calories and gram limit every day. Make sure that the Evening Snack has at least a drink (eg: tea, etc). Next to each meal, also indicate the "benefits" highlighting how this meal adds to a balanced diet and what micro, macro nutrients it prosesses.
-Make the diet plan for all 7 days, the order of the days should follow from Monday - Sunday. Follow the exact order of meals from early morning to dinner in the following example. Make sure to follow the same dictionary keys in a case senstitive manner. Take the following Monday example and populate it for the remaining days. Each day should have meals in the following order - Early Morning, Breakfast, Mid Morning, Lunch, Evening Snack and Dinner. You can give multiple items in the same meal (eg: Besan Cheela for Breakfast with Green Tea, etc). Make sure that the three main meals - Breakfast, Lunch, Dinner have more than 1 item. Give multiple items in the same meal (eg: Besan Cheela for Breakfast with Green Tea, etc). Make sure that the three main meals - Breakfast, Lunch, Dinner have more than 1 item.  \n"""
-    
-    prompt2 = """
-
- {
+                \n Calculate the total daily calory intake based on the provided TDEE and Goal. 
+                Show your detailed calculations in a json format before showing the meal plan. 
+                The key for this should be 'calorie_calculation'. 
+                In the calorie calculation, include the calories, protein, fat and carb intake for the day as well.
+                Include the TDEE too. 
+                
+                \n 
+        Make sure each meal is a balanced meal. This means that there should be a good mix of carbs and fiber (eg: multigrain roti), protein and fiber (eg: daal tadka,
+                bhindi sabzi), fiber and micronutrients, protein and probiotics (eg: curd, raw salad).
+                
+                Makes sure there is also a good integration of vitamins and micro nutrients in the meals, such as Vitamin C, D, A, B, and other micronutrients. These can be added through fruits. 
+                
+                \nGive the 7-day diet plan in the following example json dictionary format. 
+                It is crucial to make sure that the total daily protein, carbs, fat and calorie intakes in the daily plan are within the calories and gram limit every day. 
+                Make sure to follow the same dictionary keys in a case senstitive manner. 
+                You can give multiple items in the same meal (eg: Besan Cheela for Breakfast with Green Tea, etc). Make sure that the three main meals - Breakfast, Lunch, Dinner have more than 1 item.
+                Make sure that the Evening Snack has at least a drink (eg: tea, etc).
+                
+                Divide calorie breakdown for the meals can be as follows:
+                - Breakfast : 25-30% of daily calories
+                - Lunch : 30-35% of daily calories
+                - Dinner : 25-30% of daily calories
+                - Morning, Mid-Day, Evening Snacks : 5-15% of daily calories 
+            
+                
+                These three meals should also be balanced - they should have different colours and different ingredients that include a mix of protein and veggies. 
+                
+                Next to each meal, also indicate the "benefits" highlighting how this meal adds to a balanced diet and what micro, macro nutrients it prosesses. This helps justify why this diet plan is suitable for this specific customer. 
+               
+               Make the diet plan for all 7 days from Monday - Sunday.
+               Provide the output strictly in JSON format. Use consistent keys and nesting structure. The JSON should look like this:
+                """
+    prompt2 = """ 
+  {
   "meal_plan": {
-  "Monday": {
-    "Early Morning": {
-      "Item 1": {
-        "Name": "Lukewarm Fennel Seed Water",
-        "Ingredients": [
-          "1 glass water",
-          "1 tsp fennel seeds (soaked overnight)"
-        ],
-        "Recipe": "1. Soak fennel seeds in water overnight. 2. Strain and drink in the morning.",
-        "Macronutrients": {
-          "Calories": 5,
-          "Carbs": "1",
-          "Fats": "0",
-          "Protein": "0"
-        },
-        "Benefits": "Aids digestion, reduces bloating, and detoxifies the body. Rich in antioxidants and contains vitamin C."
-      }
-    },
-    "Breakfast": {
-      "Item 1": {
-        "Name": "1 Boiled Egg",
-        "Ingredients": [
-          "1 egg"
-        ],
-        "Recipe": "1. Boil water and cook the egg for 10 minutes. 2. Peel and eat.",
-        "Macronutrients": {
-          "Calories": 70,
-          "Carbs": "1",
-          "Fats": "5",
-          "Protein": "6"
-        },
-        "Benefits": "High in protein, supports muscle growth, and provides essential amino acids. Rich in vitamins B12, D, and choline."
+    "Monday": {
+      "Early Morning": {
+        "Item 1": {
+          "Name": "Lukewarm Fennel Seed Water",
+          "Macronutrients": {
+            "Calories": 5,
+            "Protein": "0",
+            "Carbs": "1",
+            "Fats": "0"
+          },
+          "Ingredients": [
+            "1 glass (250 ml) water",
+            "1 tsp fennel seeds (soaked overnight)"
+          ],
+          "Recipe": "Total Time: 5 minutes. 1. Take the fennel seeds soaked overnight in 1 glass of water. 2. Strain the water into a cup. 3. Slightly warm the strained water on the stove or microwave (do not boil). 4. Drink on an empty stomach.",
+          "Benefits": "Aids digestion, reduces bloating, detoxifies the body. Rich in antioxidants and contains vitamin C."
+        }
       },
-      "Item 2": {
-        "Name": "1 Whole Wheat Toast with Peanut Butter",
-        "Ingredients": [
-          "1 slice whole wheat bread",
-          "1 tbsp peanut butter"
-        ],
-        "Recipe": "1. Toast the bread. 2. Spread peanut butter evenly and serve.",
-        "Macronutrients": {
-          "Calories": 150,
-          "Carbs": "20",
-          "Fats": "7",
-          "Protein": "5"
+      "Breakfast": {
+        "Item 1": {
+          "Name": "1 Boiled Egg",
+          "Macronutrients": {
+            "Calories": 70,
+            "Protein": "6",
+            "Carbs": "1",
+            "Fats": "5"
+          },
+          "Ingredients": [
+            "1 egg",
+            "Water for boiling"
+          ],
+          "Recipe": "Total Time: 12 minutes. 1. Fill a saucepan with enough water to cover the egg. 2. Bring the water to a boil on medium heat. 3. Once boiling, gently add the egg and boil for 10 minutes. 4. Remove the egg and place it in cold water for 1-2 minutes. 5. Peel and serve.",
+          "Benefits": "High in protein, supports muscle growth, provides essential amino acids. Rich in vitamins B12, D, and choline."
         },
-        "Benefits": "Provides healthy fats and fiber for sustained energy. Rich in vitamin E, magnesium, and B vitamins."
+        "Item 2": {
+          "Name": "1 Whole Wheat Toast with Peanut Butter",
+          "Macronutrients": {
+            "Calories": 150,
+            "Protein": "5",
+            "Carbs": "20",
+            "Fats": "7"
+          },
+          "Ingredients": [
+            "1 slice whole wheat bread",
+            "1 tbsp peanut butter"
+          ],
+          "Recipe": "Total Time: 5 minutes. 1. Toast the bread slice in a toaster or on a hot pan until golden brown. 2. Spread 1 tbsp of peanut butter evenly on the toasted bread. 3. Serve immediately.",
+          "Benefits": "Provides healthy fats and fiber for sustained energy. Rich in vitamin E, magnesium, and B vitamins."
+        },
+        "Item 3": {
+          "Name": "Green Tea",
+          "Macronutrients": {
+            "Calories": 2,
+            "Protein": "0",
+            "Carbs": "0",
+            "Fats": "0"
+          },
+          "Ingredients": [
+            "1 cup hot water",
+            "1 green tea bag"
+          ],
+          "Recipe": "Total Time: 5 minutes. 1. Boil water and pour it into a cup. 2. Steep the green tea bag in hot water for 3–5 minutes. 3. Remove the tea bag and serve warm.",
+          "Benefits": "Boosts metabolism, supports brain function, and contains powerful antioxidants. Rich in polyphenols and vitamin C."
+        },
+        "Item 4": {
+          "Name": "1 Small Bowl of Curd",
+          "Macronutrients": {
+            "Calories": 80,
+            "Protein": "5",
+            "Carbs": "6",
+            "Fats": "4"
+          },
+          "Ingredients": [
+            "1/2 cup curd"
+          ],
+          "Recipe": "Total Time: 2 minutes. 1. Serve fresh curd in a bowl as a side.",
+          "Benefits": "Improves gut health with probiotics, strengthens bones, and aids digestion. Rich in calcium, vitamin B12, and riboflavin."
+        }
       },
-      "Item 3": {
-        "Name": "Green Tea",
-        "Ingredients": [
-          "1 cup hot water",
-          "1 green tea bag"
-        ],
-        "Recipe": "1. Steep green tea bag in hot water for 3-5 minutes. 2. Serve warm.",
-        "Macronutrients": {
-          "Calories": 2,
-          "Carbs": "0",
-          "Fats": "0",
-          "Protein": "0"
-        },
-        "Benefits": "Boosts metabolism, supports brain function, and contains powerful antioxidants. Rich in polyphenols and vitamin C."
-      }
-    },
-    "Mid Morning": {
-      "Item 1": {
-        "Name": "Apple or a Handful of Almonds",
-        "Ingredients": [
-          "1 apple or 10 almonds"
-        ],
-        "Recipe": "1. Wash the apple and eat whole or slice. 2. If almonds, eat raw or soaked.",
-        "Macronutrients": {
-          "Calories": 150,
-          "Carbs": "15",
-          "Fats": "12",
-          "Protein": "4"
-        },
-        "Benefits": "Provides fiber for digestion and heart health, and almonds add healthy fats. Apples are rich in vitamin C, and almonds provide vitamin E and magnesium."
-      }
-    },
-    "Lunch": {
-      "Item 1": {
-        "Name": "2 Chapatis (Whole Wheat)",
-        "Ingredients": [
-          "1/2 cup whole wheat flour",
-          "Water as needed",
-          "Salt to taste"
-        ],
-        "Recipe": "1. Knead the dough. 2. Roll into thin circles and cook on a hot tawa.",
-        "Macronutrients": {
-          "Calories": 200,
-          "Carbs": "40",
-          "Fats": "2",
-          "Protein": "6"
-        },
-        "Benefits": "Provides complex carbohydrates for sustained energy and aids digestion. Rich in fiber, iron, and B vitamins."
+      "Mid Morning": {
+        "Item 1": {
+          "Name": "Apple or a Handful of Almonds",
+          "Macronutrients": {
+            "Calories": 150,
+            "Protein": "4",
+            "Carbs": "15",
+            "Fats": "12"
+          },
+          "Ingredients": [
+            "1 apple or 10 almonds"
+          ],
+          "Recipe": "Total Time: 3 minutes. 1. Wash the apple thoroughly and eat whole or slice into pieces. 2. If opting for almonds, eat raw or soak them overnight for better digestion.",
+          "Benefits": "Provides fiber for digestion and heart health, and almonds add healthy fats. Apples are rich in vitamin C, and almonds provide vitamin E and magnesium."
+        }
       },
-      "Item 2": {
-        "Name": "1 Serving of Dal (Lentils)",
-        "Ingredients": [
-          "1/2 cup lentils",
-          "1 tsp ghee",
-          "Salt and spices to taste"
-        ],
-        "Recipe": "1. Cook lentils with water, salt, and spices. 2. Add ghee tempering.",
-        "Macronutrients": {
-          "Calories": 150,
-          "Carbs": "25",
-          "Fats": "2",
-          "Protein": "10"
+      "Lunch": {
+        "Item 1": {
+          "Name": "2 Chapatis (Whole Wheat)",
+          "Macronutrients": {
+            "Calories": 200,
+            "Protein": "6",
+            "Carbs": "40",
+            "Fats": "2"
+          },
+          "Ingredients": [
+            "1/2 cup whole wheat flour",
+            "Water as needed",
+            "Salt to taste"
+          ],
+          "Recipe": "Total Time: 20 minutes. 1. In a bowl, mix flour and a pinch of salt. 2. Gradually add water and knead into a soft dough. 3. Divide into two equal balls and roll out into thin circles. 4. Cook each on a hot tawa (griddle) for about 1 minute per side until golden spots appear.",
+          "Benefits": "Provides complex carbohydrates for sustained energy and aids digestion. Rich in fiber, iron, and B vitamins."
         },
-        "Benefits": "Excellent plant-based protein source, supports muscle growth, and stabilizes blood sugar. Rich in iron, folate, and B vitamins."
-      },
-      "Item 3": {
-        "Name": "1 Cup Mixed Vegetable Curry (Low Oil)",
-        "Ingredients": [
-          "1 cup mixed vegetables",
-          "1 tsp oil",
-          "Salt and spices to taste"
-        ],
-        "Recipe": "1. Heat oil, sauté vegetables with spices. 2. Cook until tender.",
-        "Macronutrients": {
-          "Calories": 100,
-          "Carbs": "15",
-          "Fats": "4",
-          "Protein": "3"
+        "Item 2": {
+          "Name": "1 Serving of Dal (Lentils)",
+          "Macronutrients": {
+            "Calories": 150,
+            "Protein": "10",
+            "Carbs": "25",
+            "Fats": "2"
+          },
+          "Ingredients": [
+            "1/2 cup lentils",
+            "1 tsp ghee",
+            "Salt and spices to taste"
+          ],
+          "Recipe": "Total Time: 25 minutes. 1. Rinse lentils and add to a pressure cooker with 1.5 cups water, salt, and turmeric. 2. Cook for 3–4 whistles. 3. In a separate pan, heat ghee and add cumin seeds, garlic, and chili for tempering. 4. Add the tempering to the cooked dal and mix well.",
+          "Benefits": "Excellent plant-based protein source, supports muscle growth, and stabilizes blood sugar. Rich in iron, folate, and B vitamins."
         },
-        "Benefits": "Provides essential vitamins and minerals for immune health. Rich in vitamins A, C, and K, along with antioxidants."
-      }
-    },
-    "Evening Snack": {
-      "Item 1": {
-        "Name": "1 Cup Buttermilk",
-        "Ingredients": [
-          "1 cup yogurt",
-          "Water",
-          "Salt and spices to taste"
-        ],
-        "Recipe": "1. Blend yogurt with water and spices.",
-        "Macronutrients": {
-          "Calories": 50,
-          "Carbs": "6",
-          "Fats": "2",
-          "Protein": "3"
+        "Item 3": {
+          "Name": "1 Cup Mixed Vegetable Curry (Low Oil)",
+          "Macronutrients": {
+            "Calories": 100,
+            "Protein": "3",
+            "Carbs": "15",
+            "Fats": "4"
+          },
+          "Ingredients": [
+            "1 cup chopped mixed vegetables (carrot, beans, peas, etc.)",
+            "1 tsp oil",
+            "Salt and spices to taste"
+          ],
+          "Recipe": "Total Time: 20 minutes. 1. Heat oil in a pan, add cumin seeds and chopped onion. 2. Sauté until golden, then add chopped vegetables. 3. Add salt, turmeric, and garam masala. 4. Cover and cook on low heat until vegetables are tender.",
+          "Benefits": "Provides essential vitamins and minerals for immune health. Rich in vitamins A, C, and K, along with antioxidants."
         },
-        "Benefits": "Aids digestion and hydration, contains probiotics. Rich in calcium and vitamin B12."
-      }
-    },
-    "Dinner": {
-      "Item 1": {
-        "Name": "1 Serving of Chicken Curry (Lean)",
-        "Ingredients": [
-          "100g chicken breast",
-          "Onion, tomatoes, ginger, garlic, and spices"
-        ],
-        "Recipe": "1. Cook chicken with onions, tomatoes, and spices until tender.",
-        "Macronutrients": {
-          "Calories": 230,
-          "Carbs": "5",
-          "Fats": "10",
-          "Protein": "30"
-        },
-        "Benefits": "High in lean protein, boosts muscle repair, and contains iron. Supports immune function and is rich in B vitamins."
-      },
-      "Item 2": {
-        "Name": "1 Cup Steamed Broccoli",
-        "Ingredients": [
-          "1 cup broccoli"
-        ],
-        "Recipe": "1. Steam broccoli until tender, but not mushy.",
-        "Macronutrients": {
-          "Calories": 55,
-          "Carbs": "11",
-          "Fats": "0",
-          "Protein": "4"
-        },
-        "Benefits": "Rich in vitamins C and K, aids in digestion, and has anti-inflammatory properties."
-      },
-      "Item 3": {
-        "Name": "1/2 Cup Brown Rice",
-        "Ingredients": [
-          "1/2 cup brown rice",
-          "Water as needed"
-        ],
-        "Recipe": "1. Boil water and cook rice until soft.",
-        "Macronutrients": {
-          "Calories": 110,
-          "Carbs": "23",
-          "Fats": "1",
-          "Protein": "3"
-        },
-        "Benefits": "Provides complex carbs for energy, rich in fiber and minerals, such as magnesium."
-      }
-    }
-  }
-}
-}
+        "Item 4": {
+          "Name": "Small Bowl of Curd",
+          "Macronutrients": {
+            "Calories": 80,
+            "Protein": "5",
+            "Carbs": "6",
+            "Fats": "4"
+          },
+          "Ingredients": [
+            "1/2 cup curd"
+          ],
+          "Recipe": "Total Time: 2 minutes. 1. Serve fresh curd in a small bowl as a side dish.",
+          "Benefits": "Supports gut health and improves digestion. Rich in probiotics, calcium, and vitamin B12."
+        }
+        }
+        }
+        }
+        }
            """
-    
-#     print(prompt1)
    
 
-    return prompt1+prompt2
-
-
-
-
-
+    return prompt1 + prompt2
 
 
 
