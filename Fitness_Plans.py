@@ -3,7 +3,7 @@
 
 # In[52]:
 
-
+from flask import Flask, request
 import random
 from openai import OpenAI
 import json
@@ -11,21 +11,28 @@ import pandas as pd
 
 
 # In[67]:
+app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
+
+@app.route("/", methods=['GET'])
+def home():
+    return "<h1>Kanupriya's Flask App</h1>"
 
 
-age = 45
-gender = 'female'
-height = 168
-weight = 80
-activity_level = 'Lightly active'
-goal = 'lose weight'
-equipment = 'None'
-workout_pref = 'Cardio'
-target_zones = 'Glutes'
-skill_level = 'Intermediate'
-struggles = 'Dumbell'
-time = '30 minutes'
-api_key={api_key}
+
+# age = 45
+# gender = 'female'
+# height = 168
+# weight = 80
+# activity_level = 'Lightly active'
+# goal = 'lose weight'
+# equipment = 'None'
+# workout_pref = 'Cardio'
+# target_zones = 'Glutes'
+# skill_level = 'Intermediate'
+# struggles = 'NA'
+# time = '30 minutes'
+# api_key={api_key}
 # 
 
 
@@ -34,7 +41,7 @@ api_key={api_key}
 # In[68]:
 
 
-def fitness_gpt(age, gender, height, weight, activity_level, goal, equipment, workout_pref, target_zones, skill_level, struggles):  
+def fitness_gpt(age, gender, height, weight, activity_level, goal, equipment, workout_pref, target_zones, skill_level, struggles, time):  
     
     prompt1 = f"""You are a fitness coach that generates a 7-day personalized workout plan using only the exercises listed below. Use the provided user information to curate the most appropriate daily workouts including warm-ups, main exercises, and cooldown stretches. Tailor the intensity, duration, and progression based on the user’s profile.
     User Info:
@@ -74,11 +81,44 @@ def fitness_gpt(age, gender, height, weight, activity_level, goal, equipment, wo
     return prompt1+prompt2
 
 
+@app.route('/get_fitness_plan', methods=['GET'])
+def generate_fitness_plan():
 
-def generate_fitness_plan(age, gender, height, weight, activity_level, goal, equipment, workout_pref, target_zones, skill_level, struggles, api_key):
+    api_key = request.args.get('api_key')
+    age = int(request.args.get('age'))
+    gender = request.args.get('gender')
+    height = int(request.args.get('height'))
+    weight = int(request.args.get('weight'))
+    activity_level = request.args.get('activity')
+    goal = request.args.get('goal')
+    equipment = request.args.get('equipment')
+    workout_pref = request.args.get('workout_pref')
+    skill_level = request.args.get('skill_level')
+    struggles = request.args.get('struggles')
+    target_zone = request.args.get('target_zone')
+    time = request.args.get('time')
+
+    if not age:
+        return "<h1>Error: Missing 'age' parameter</h1>", 400
+    
+    if not gender:
+        return "<h1>Error: Missing 'gender' parameter</h1>", 400
+    
+    if not height:
+        return "<h1>Error: Missing 'height' parameter</h1>", 400
+    
+    if not weight:
+        return "<h1>Error: Missing 'weight' parameter</h1>", 400
+    
+    if not activity_level:
+        return "<h1>Error: Missing 'activity' parameter</h1>", 400
+    
+    if not goal:
+        return "<h1>Error: Missing 'goal' parameter</h1>", 400
+    
 
 
-    prompt = fitness_gpt(age, gender, height, weight, activity_level, goal, equipment, workout_pref, target_zones, skill_level, struggles)
+    prompt = fitness_gpt(age, gender, height, weight, activity_level, goal, equipment, workout_pref, target_zone, skill_level, struggles, time)
 
 
 
@@ -115,12 +155,5 @@ def generate_fitness_plan(age, gender, height, weight, activity_level, goal, equ
     
     return fitness_plan
 
-fitness_plan = generate_fitness_plan(age, gender, height, weight, activity_level, goal, equipment, workout_pref, target_zones, skill_level, struggles, api_key)
-
-print(fitness_plan)
-
-
-
-
-
-
+if __name__ == "__main__":
+    app.run()
